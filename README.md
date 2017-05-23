@@ -1,8 +1,8 @@
-#Compilers : COMP36512
+# Compilers : COMP36512
 
 Going to be making my notes in this markdown file, plus also maybe throwing some basic implementations written in python for lexing, parsing, etc (if I'm feeling adventurous).
 
-##Index
+## Index
 
 1. Introduction
 2. General Structure of a Compiler
@@ -25,16 +25,16 @@ Going to be making my notes in this markdown file, plus also maybe throwing some
 19. Lecture Nineteen: Code Optimisation
 20. Additional Notes for Exam
 
-##Lecture One: Introduction
+## Lecture One: Introduction
 
 A compiler takes some source code, and produces an output in another language, while the retaining meaning of the source.
 
-####The compiler must:
+#### The compiler must:
  * Generate correct code.
  * Recognise errors.
  * Analyses and Synthesise.
 
-####The properties of a good compiler:
+#### The properties of a good compiler:
  * Generates correct code.
  * Generates fast code (optimisations).
  * Conforms to specifications of input language (standardisations).
@@ -44,16 +44,16 @@ A compiler takes some source code, and produces an output in another language, w
  * Consistent optimisations => similar logic in all instances.
  * Works with debugger.
 
-####Other issues:
+#### Other issues:
  * Speed (of compiled code).
  * Space (we don't want our executable to be larger than the input).
  * Feedback.
 
 Which issues do we prioritise? It is use case dependant.
 
-##Lecture Two: General Structure of a Compiler
+## Lecture Two: General Structure of a Compiler
 
-####Two Major Phases: 
+#### Two Major Phases: 
  * Front End: Analysis.
  * Back End: Synthesis.
 
@@ -61,7 +61,7 @@ Source -> (analysis) -> Compiler -> (Synthesis) -> Target.
 
 The components of a compiler are outlined below:
 
-####Front End:
+#### Front End:
 
  1. Lexical Analysis (scanning): reads characters from source and produces a set of tokens.
  	a. Tokens come in the form: <token_class, attribute>.
@@ -77,7 +77,7 @@ The components of a compiler are outlined below:
  	c. Examples: Type Checking, Flow-of-Control Checking, Uniqueness (or reserved) Checking.
  4. Intermediate Code Generation: Translates language specific constructs into more general constructs.
 
-####Back End:
+#### Back End:
 
  5. IR Optimisation: Optimise the intermediate code.
  6. Code Generation: Map AST into a linear list of target machine instructions, in a symbolic form:
@@ -87,13 +87,13 @@ The components of a compiler are outlined below:
  7. Target Code Optimisation: Machine code information required by the OS is generated.
  8. Target Code Generation: Machine code and associated information required by the Operating System are generated.
 
-##Lecture Three: Introduction to Lexical Analysis
+## Lecture Three: Introduction to Lexical Analysis
 
 Natural languages have 'high degrees of freedom', as humans we're able to interpret words (symbols) in numerous ways, they're potentially ambiguous and based on their contextual confines (this is also arbitrary, because every person has their own internal dictionary and languages are not always set in stone, so to speak).
 
 However, in a formalised language, such as a programming language, a 'high degree of freedom' isn't usually a good thing (although there is a trade off and you have some languages that are loosely typed, where as others are strongly typed - the degree of freedom which you design your language to have may affect the complexity of the implementation of the compiler / interpreter).
 
-####Formal Language Lingo:
+#### Formal Language Lingo:
 
  * Vocabulary: finite set of symbols.
  * String: finite sequence of symbols.
@@ -107,7 +107,7 @@ However, in a formalised language, such as a programming language, a 'high degre
 
 In order to construct a set of tokens during lexical analysis, we need to be able to recognise tokens (patterns) and we can identify an individual token using a CFG as above. Some tokens are easy to identify, e.g: white space (it can't really be much besides spaces and tabs, etc), but some tokens are going to be inherently more complex (e.g: floating point numbers?).
 
-####Regular Expressions
+#### Regular Expressions
 
 A regular expression is a way of expressing a regular language, it is a formula that describes a possibly infinite set of strings. Methods of performing lexical analysis using regular expressions:
  * Ad Hoc: break down the input into numerous smaller problems and process them separately.
@@ -123,7 +123,7 @@ A regular expression is a way of expressing a regular language, it is a formula 
 
 Regular expressions can be expressed as Transitions tables, which lead to deterministic and non-deterministic Automatons.
 
-##Lecture Four: From REs to DFAs
+## Lecture Four: From REs to DFAs
 
 * REs can describe regular languages
 * Every RE can be converted into an NFA (Thompson's Construction).
@@ -132,11 +132,11 @@ Regular expressions can be expressed as Transitions tables, which lead to determ
 
 Non deterministic finite automaton (NFA) are if one or more transitions exist from one state to another state under the same transition criteria (match). A regular expression is converted to an NFA using the rules described by Thompson's Construction.
 
-####Key ideas for Thompson's Construction are outlined in an image in this Repo (ThompsonsPrincipals.png).
+#### Key ideas for Thompson's Construction are outlined in an image in this Repo (ThompsonsPrincipals.png).
 
 Deterministic finite automaton will describe a transition for every possible input, and will always terminate. Every NFA can be described using a DFA. This is done by isolating the states that create the non deterministic property from the transitions table and constructing a deterministic variant using the **subset construction algorithm**.
 
-####NFA to DFA, Two Key Functions:
+#### NFA to DFA, Two Key Functions:
 
 1. Moves(STATE ID, INPUT), returns a list of the states possible to reach from the STATE ID, using the INPUT to traverse the automaton, but *DOES NOT INCLUDE THE STARTING STATE*.
 
@@ -182,7 +182,7 @@ As a side note that I thought was kind of interesting while coming up with this 
 
 *IDEA: Make an implementation in python that takes a regular expression from the user, constructs an NFA from this expression, converts this NFA into a DFA and then map this out using networkx and matplotlib python libraries - hopefully I'll have time to do this, because I think this could be pretty fucking cool! Why do I have to revise when I could be spending my time doing cool things? :( Wait a minute... wouldn't that actually be the implementation of a lexical analyser? Will come back to this point soon.. Would also like to point out that these can easily be modelled as directed graphs, states are nodes and transitions are directed edges between nodes which are weighted with value, this value COULD be numerical, since it is possible to map each symbol from the alphabet that makes up the vocabulary of the language to a value (maybe use a hashmap for this), or if netwokx allows, we could simply weight the edges of the directed graph with the symbols themselves...?*
 
-####The Subset Construction Algorithm
+#### The Subset Construction Algorithm
 
 The functions 'Move' and 'e-closure' are foundational to the subset construction algorithm, as described below [2]:
 
@@ -196,7 +196,7 @@ The functions 'Move' and 'e-closure' are foundational to the subset construction
 
 *implementing this is defiantly do-able, but it might take a bit of time, I'm not sure if I've got the time to do this atm..*
 
-##Lecture Five: DFA Minimisation
+## Lecture Five: DFA Minimisation
 
 If a DFA has the property where there exists two or more states whose transitions are found to be equivalent, as long as both are either final or regular regular then the DFA can be reduced. The reduction is based on Hopcroft's Algorithm, as follows:
 
@@ -213,9 +213,9 @@ To-do:
 * Re-watch lecture five and make some more notes, do some more practice.
 * Practice exam questions associated with Lexical Analysis.
 
-##Lecture Six: Examples Lecture
+## Lecture Six: Examples Lecture
 
-##Lecture Seven: Introduction to Parsing (Syntax Analysis)
+## Lecture Seven: Introduction to Parsing (Syntax Analysis)
 
 Okay, so we've taken some input-stream and have generated a set of tokens based on that input, now we need to check that these tokens are syntactically correct; that is, that they are in the correct order, so to speak.
 
@@ -243,20 +243,20 @@ A parse tree can be constructed to graphically represent these processes (deriva
 
 	The leaves of the tree constitute a sentential form.
 
-####Ambiguity
+#### Ambiguity
 
 Any grammar that has more than one left-most or right-most derivation for the same output is ambiguous, and if it is ambiguous a grammar is not good for a compiler, because it will construct two different parse trees and so the language will have no notion of precedence.
 
 If a programming language is defined such that it may accept ambiguous terms (loosely typed), the analysis of these parts must be postponed until later in the compilation process (FORTRAN, python? ruby?).
 
-####Parsing Techniques
+#### Parsing Techniques
 
 Once we've got a grammar that is not ambiguous, there are two different ways to do syntax analysis:
  1. Top down: Useful if we have simple grammars and simple strings.
  2. Bottom up: Most compilers use bottom up because this type of parsing can be automated. From a compilers point of view, it needs to have some deterministic way of finding out what the next substitution should be, at every token.
 
 
-##Lecture Eight: Top Down Syntax Analysis
+## Lecture Eight: Top Down Syntax Analysis
 *(This lecture needs updating..)*
 
 * Construct the top node of the tree & rest with pre-order (depth-first).
@@ -264,16 +264,16 @@ Once we've got a grammar that is not ambiguous, there are two different ways to 
 * Essentially: try and find a left most derivative for the input string.
 * Some grammars are back-track free (predictive parsing)
 
-####Problems
+#### Problems
 
 * Not necessarily very efficient, due to possible failures.
 * There is potential to enter into a infinite loop (remember compilers are machines and are algorithmic, trying to tell whether a program is infinite or not is an NP complete problem, I think?).
 
-####Left Recursive Grammars
+#### Left Recursive Grammars
 
 Grammar is left recursive if it has a non-terminal A, such that A->Aa, for some string a.
 
-####LL1 Property
+#### LL1 Property
 
 <UPDATE THIS BIT>
 
@@ -281,19 +281,19 @@ Grammar is left recursive if it has a non-terminal A, such that A->Aa, for some 
 
 Top down parsing is good if we have a really simple grammar (as long as the grammar has simple properties: LL1, use top down parsing because it can be done without backtracking). However in the general case, real compilers use bottom up syntax analysis because not all grammars have the LL1 property.
 
-##Lecture Nine: Bottom Up Syntax Analysis
+## Lecture Nine: Bottom Up Syntax Analysis
 
 <UPDATE THIS>
 
-####Lecture Ten: Examples Exercise
+#### Lecture Ten: Examples Exercise
 
-##Lecture Eleven: Context Sensitive Analysis
+## Lecture Eleven: Context Sensitive Analysis
 
 In terms of syntax analysis, we can have code that is syntactically correct but in terms of context, it may be incorrect. For example, you could have a function with five arguments, but you could have a call to this function with six arguments. This is syntactically correct, but contextually incorrect.
 
 * Property: Something is an error because of something defined somewhere else in the code.
 
-####Type Checking
+#### Type Checking
 
 Programming languages that have a declare before use policy have a table which can be checked to see how two different types may interact under different operations. Components of a type system:
 * Base or Built In types (integers, boolean, characters, etc).
@@ -304,7 +304,7 @@ Programming languages that have a declare before use policy have a table which c
 
 This is not difficult for a language with a declare before use policy, but if the language does not have a declare before use policy, then it becomes more challenging.
 
-####Attribute Grammar
+#### Attribute Grammar
 
 For every symbol in the language, have an associated value that has some kind of semantic meaning, such that we are in some kind of situation to answer some semantic questions. Essentially labels.
 
@@ -325,7 +325,7 @@ Bit->  0
 
 Sign has an attribute neg or pos, bit has two attributes, pos and val. Val is dependant on position.
 
-####Dependancy Graph
+#### Dependancy Graph
 
 If one node depends on another, then the former will have to be evaluated before the latter.
 
@@ -355,7 +355,7 @@ Why do we need this?
 
 The IR is suppose to be convenient for the compiler.
 
-####Design Issues
+#### Design Issues
 
 * We need something lightweight.
 * We need something that is easy to manipulate.
@@ -366,13 +366,13 @@ The IR is suppose to be convenient for the compiler.
 
 Control flow graph?
 
-####Abstract Syntax Tree
+#### Abstract Syntax Tree
 
 Can be directly derived from the parse tree, all we have to do is eliminate all the symbols introduced in syntax analysis.
 
 Capturing the hierarchy of the 
 
-####Directed Acylic Graphs
+#### Directed Acylic Graphs
 
 Graphs that do not have cylces, every edge points from one node to another.
 
@@ -381,7 +381,7 @@ Advantages:
 
 However, search (traversing the tree) can be problematic (slower) because we have to go in cycles sometimes.
 
-####Control Flow Graph
+#### Control Flow Graph
 
 Models the way that the code transfers control between blocks in the procedure.
 
@@ -389,7 +389,7 @@ Models the way that the code transfers control between blocks in the procedure.
 * Edge: transfer of control between basic blocks.
 * (Captures loops, if statements, case, goto).
 
-####Data Dependence Graph
+#### Data Dependence Graph
 
 Encodes the flow of data.
 
@@ -397,11 +397,11 @@ Encodes the flow of data.
 * Edge: connects two nodes if one uses the result of the other
 * Useful in examining the legality of program transformations
 
-####Call Graph
+#### Call Graph
 
 Show dependencies between procedures. Useful for inter-procedural analysis.
 
-####Three-Address Code
+#### Three-Address Code
 
 	if (x > y) then z = x - 2 * y
 
@@ -417,7 +417,7 @@ becomes
 	
 	L
 
-####Two Address Code
+#### Two Address Code
 
 	LOAD	r1, x
 	LOAD	r2, y
@@ -432,7 +432,7 @@ becomes
 
 	skip
 
-####One address code
+#### One address code
 
 Basically similar to the above, but we just use the stack to push and pop variables..
 
@@ -446,14 +446,14 @@ Defines how types interact?? Captures information about all the useful symbol in
 * everything that requires some memory space, or it effects control.
 * once a compiler finds that there is a certain variable, contain all information associated with this variable in a centrally generated table (same block of memory? i.e: objects in Java stored in same memory block - makes garbage collection and referencing easier, perhaps..)
 
-####Information compiler needs to know about each item:
+#### Information compiler needs to know about each item:
 * name.
 * data type.
 * declaring procedure (constructors?)
 * storage information (where this is being held in memory? in Java this might be reference - hashed memory location, in C it might be an actual memory location).
 * depending on what it is: perhaps the parameters if it's a function, etc.
 
-####How can we organise a symbol table??
+#### How can we organise a symbol table??
 
 This determines the efficiency of compilation. It would be nice to have some kind of look-up table??
 
@@ -467,11 +467,11 @@ What if we don't have a unique hashing function..? If we get a collision, we can
 
 Alternative: Re-hashing, every time there is a collision, you can just rehash, this is equivalent to choosing a unique hash function, I believe...? Can you get unique hash functions..? Pretty sure it's accomplished through re-hashing anyway.
 
-####Conclusion
+#### Conclusion
 
 Symbol table is an important data structure, and hash table is the best way of doing this. But we need a good hash function and we need to be able to resolve collisions.
 
-##Lecture Thirteen: Procedure Abstraction, Run-Time Storage Organisation
+## Lecture Thirteen: Procedure Abstraction, Run-Time Storage Organisation
 
 Source Code -> FRONT END -> IR -> MIDDLE END -> IR -> BACK-END -> OBJECT CODE
 
@@ -484,7 +484,7 @@ We're talking about all kinds of stuff today (not really about compilers only):
 
 How is the compiler going to interact with the OS, in order to produce code that is going to respect what the OS is doing??
 
-####The Procedure
+#### The Procedure
 
 Notions:
 * functions / procedure / subroutine, etc..
@@ -514,7 +514,7 @@ What we would like to do is to get the compiler to provide space at run-time for
 
 We use a convention to do this... The **Linkage Convention**.
 
-####The Linkage Convention
+#### The Linkage Convention
 
 At the beginning and at the end of a procedure some book-keeping is done. Space can be dynamically allocated at run-time, this space can then be removed once the procedure is exited (garbage collection in Java or free() in C, etc).
 
@@ -533,7 +533,7 @@ What we really want is a compiler that will allocate space when a call to a func
 
 **Calling a procedure has an overhead.**
 
-####Procedure Linkages:
+#### Procedure Linkages:
 
 Caller (pre-call):
 * Allocate Activation Record
@@ -568,13 +568,13 @@ Pretty straight forward... Done a lot of this when writing assembly language..
 
 Activation records: stack frames are otherwise known as activation records.. apparently.. (wikipedia)
 
-####Placing Run-Time Data Structures:
+#### Placing Run-Time Data Structures:
 
 Code | Static & Global | Heap ->> | <<- Stack
 
 Most things to do with activation records are stored, usually, in the stack. Heap and stack grow towards each other. From a compilers point of view, the space for everything can be predicted and mapped accordingly to somewhere specific.
 
-####Activation Record Details
+#### Activation Record Details
 
 How does the compiler find the variables?
 * They are offsets from the AR base pointer.
@@ -591,7 +591,7 @@ Efficiency wise: Static, Stack, Heap.
 
 (Most efficient -> Least Efficient)
 
-####Run-Time Storage Organisation
+#### Run-Time Storage Organisation
 
 We can use either:
 * Access links, which, if I understand correctly, basically every time you make a call to a function, from within a function, it throws everything on to the heap for storage, or allocates more memory on the stack??? Basically keeps stacking up, so there is a fair amount of overhead.
@@ -599,7 +599,7 @@ We can use either:
 
 **not too sure if I'm correct with the access links, I'll check with others when I go in on Monday to try and solidify my understanding of this**
 
-####Other storage issues
+#### Other storage issues
 
 * 32 bit, or 64 bit? Why does this matter -> because of the offset, right? Are we using a 4 bit offset, are we using a x bit offset? Essentially, what is the word boundary? Everything is arbitrary.
 * Cache Performance: if two variables are in near proximity in the code, then it is convenient to store them in near proximity in the cache. Complex stuff.
@@ -608,15 +608,15 @@ We can use either:
 * managing the heap: first-fit allocation with several pools for common sizes (usually powers of 2 up to page size). 
 * object-orientated languages have complex name spaces.
 
-####Conclusion / Finally...
+#### Conclusion / Finally...
 
 * The compiler needs to emit code for each call to a procedure to take into account (at run-time) procedure linkage.
 * The compiler needs to emit code to provide (at run-time) addressability for variables of other procedures.
 * Inlining: the compiler can avoid some of the problems related to procedures by substituting a procedure call with the actual code for the procedure. There are advantages from doing this, but it may not be always possible (can you see why?) and there are disadvantages too.
 
-####Lecture Fourteen: Examples Exercise
+#### Lecture Fourteen: Examples Exercise
 
-##Lecture Fifteen: Code Generation - Instruction Selection
+## Lecture Fifteen: Code Generation - Instruction Selection
 
 Now, we're moving to the back end!
 
@@ -634,13 +634,13 @@ We're going to look at:
 * Register Allocation.
 * Instruction Scheduling.
 
-####Instruction Selection as a Problem:
+#### Instruction Selection as a Problem:
 
 The approach of mapping an Intermediate Representation onto low level instructions, we're talking about a pattern matching problem, consider an Add instruction at the intermediate level and we're mapping to a low level function, we're going to be implementing it as an ADD instruction, simple: Add -> Add. We can detect things like loops in the AST, in the same way we would recognise an ADD, we can recognise a loop and convert it to it's machine code equivalent.
 
 So, we can issue multiple cycles at a time. An Add would be a single cycle, but a loop will be a multi-cycled set of instructions. So in Instruction Scheduling, there is an instruction latency, this is the time the instructions was issued until the time of the results of this instruction are available.
 
-####Code Generation for Arithmetic Expressions
+#### Code Generation for Arithmetic Expressions
 
 Example: X + Y
 
@@ -653,7 +653,7 @@ The load is usually done using a base register and an offset:
 
 	LOAD r1, [base, offset]
 
-####Issues with Arithmetic Expressions
+#### Issues with Arithmetic Expressions
 
 If the value of x is already in the memory somewhere, there's no point loading it in again. So how do we determine if it's already in the memory? Can potentially do a number of passes to work it out.
 
@@ -663,7 +663,7 @@ If there are free registers available, should we use them? If all our registers 
 
 Multiplications and Divisions: The cost of multiplication should be several cycles, shift operations take just one cycle, can potentially optimise.
 
-####Trading Register Usage with Performance
+#### Trading Register Usage with Performance
 
 Two possible approaches of: W = W * 2 * x * y * z
 
@@ -699,7 +699,7 @@ Here, the LOAD instructions can be overlapped (remember the pipeline for OS year
 
 && and || operators, compilers will only evaluate one part (X) of the code and if it's false for an if(X && Y), because it's just wasted cycles.
 
-##Lecture Sixteen: Register Allocation
+## Lecture Sixteen: Register Allocation
 
 * Assume RISC-like type of code.
 * Makes use of **virtual registers** (virtual memory) - even though there are a limited number of **physical registers**.
@@ -708,7 +708,7 @@ Here, the LOAD instructions can be overlapped (remember the pipeline for OS year
   * Minimise number of loads and stores (spill code) and their space.
   * The allocator must be efficient (no backtracking).
 
-####Background
+#### Background
 
 * Basic Block: Maximal length segment of straight line code.
 * Local register allocation: within a single block.
@@ -717,7 +717,7 @@ Here, the LOAD instructions can be overlapped (remember the pipeline for OS year
 * Assignment: choose specific registers for values.
 * Complexity: we need good heuristics, GOOD heuristics that are GOOD ENOUGH.
 
-####Liveness and Live Ranges
+#### Liveness and Live Ranges
 
 Efficiently choosing which registers to allocate values to. The liveness is between definition and the last use before it is redefined. Live range is from variable definition to last use.
 
@@ -734,15 +734,15 @@ If we are in a position where one live range starts at the end of another live r
 
 **LIVE RANGES IS AN IMPORTANT CONCEPT IN REGISTER ALLOCATION - ALWAYS POPS UP IN EXAM, MAKE SURE YOU CAN CALCULATE IT**
 
-####Register Allocation Schemes
+#### Register Allocation Schemes
 
-#####Top Down (Local) Register Allocation
+##### Top Down (Local) Register Allocation
 
 if we have 10 values, and only 5 registers on the processor (number of values to be stored > numbers of registers), we use two registers to transfer to and from memory. Using three registers, get the values that are used most often (most commonly used) and for the remaining 7 values, load and store from and to the memory when we need them.
 
 Problem: what if the most commonly used values are only just used in the first half of the basic block, or they are just used in the second half of the basic block? It's not very efficient. Or perhaps, they are only just more commonly used than the other values.
 
-#####Bottom Up Allocation
+##### Bottom Up Allocation
 
 Load the most commonly used value into a register and use the remaining registers as needed. We have a pool of registers, and in this pool of registers, we strictly go with the live ranges.
 
@@ -754,9 +754,9 @@ Instruction 7: A live range terminates, return this register to the pool..
 
 If at some point the pool is empty, then try to store to the main memory, the register that is going to be used the furtherest in the future, because we don't need this register for quite a while.
 
-##Lecture 17: Register Allocation via Graph Colouring
+## Lecture 17: Register Allocation via Graph Colouring
 
-####Recap on last lecture
+#### Recap on last lecture
 
 We have code that needs to allocate 30 values, we have 10 registers. What we are going to do, is we are going to maintain a pool of registers and then we are going to get one only when it is necessarily. It is only necessarily when we are going to assign a value.
 
@@ -766,7 +766,7 @@ At the point where we don't need the register any more (it's live range ends), t
 
 There is another idea... Which is often used in practice, is because it allows us to formulate the problem of register allocation, using a well studied and well understood graph theory problem and then we can try and solve the graph theory problem and use a solution based on this...
 
-####Register Allocation via Graph Colouring
+#### Register Allocation via Graph Colouring
 
 How many colours do we need in order to colour this graph, in such a way that two neighbouring nodes do not share the same colour?
 
@@ -783,14 +783,14 @@ The interference Graph is derived from these live ranges, each register whose li
 
 Once we have produced this interference graph, we need to find the least number of colours which can be mapped to this graph, using graph colouring. Then we assign this value as K, the number of physical registers that we need.
 
-####Top-Down Colouring
+#### Top-Down Colouring
 
 * Rank the live ranges.
  * possible ways of ranking: number of neighbours, spill cost, etc.
 * Following the ranking to assign colours.
 * If a live range cannot be coloured, then spill (store after definition, then load before each use) or split the live range.
 
-####Bottom-Up Colouring
+#### Bottom-Up Colouring
 
 What really changes here is how we are going to assign the colours. There are some advantages to using this approach in practical scenarios.
 
@@ -806,7 +806,7 @@ We have a simple graph with only five nodes. We are trying to colour this with t
 
 (Observation: A graph having a node n with degree < k is k-colour-able iff the graph with node n removed is k-colour-able)
 
-####Global Register Allocation via Graph Colouring
+#### Global Register Allocation via Graph Colouring
 
 The idea: Live ranges that do not interfere can share the same registers.
 
@@ -818,7 +818,7 @@ The algorithm:
 4. Map colours onto physical registers.
 
 
-####Considering Live Ranges
+#### Considering Live Ranges
 
 **LIVEIN and LIVEOUT**
 
@@ -833,7 +833,7 @@ Constructing a control flow diagram:
 	* if it is used before it is defined (if it is defined) in basic block b; or
 	* it is not used, nor defined, but it is in LIVEOUT(b).
 
-####Building the Interference graph
+#### Building the Interference graph
 
 	for each basic block b
 		LIVENOW(b)<-LIVEOUT(b)
@@ -844,7 +844,7 @@ Constructing a control flow diagram:
 			add lr2 and lr3 to LIVENOW(b)
 
 
-##Lecture Eighteen: Instruction Scheduling
+## Lecture Eighteen: Instruction Scheduling
 
 * The problem:
 	* Given a code fragment for some target machine and the latencies for each individual operation, reorder operations to minimise execution time.
@@ -856,7 +856,7 @@ Using instruction scheduling, we're trying to separate independent code blokes a
 * Avoid pipeline stalls by rearranging the order of instructions.
 * Avoid illegal or semantically ambiguous operations (typically involving subtle instruction pipeline timing issues or non-interlocked resources.)
 
-####Background
+#### Background
 
 * Some operations have delay latency for execution. For example, loads and stores.
 
@@ -888,7 +888,7 @@ Here, the first three loads are overlapped in the pipeline, so in total we have 
 
 It makes sense to execute the things with the longest latencies first.
 
-####Algorithmic Method
+#### Algorithmic Method
 
 1. Build a precedence (data dependence) graph. (easy enough)
 2. Compute a priority function for the nodes of the graph - we decide this.
@@ -946,7 +946,7 @@ These two paradigms don't necessarily give the same outcome, so probably best to
 
 The more number of registers we use, the easier it becomes for instruction scheduling because there are fewer dependencies. If we try and use as few registers as possible, then we create more dependencies.
 
-####Multiple Functional Units
+#### Multiple Functional Units
 
 * Modern architectures can run operations in parallel.
 * List scheduling needs to be modified so that it can schedule as many operations per cycle as functional units (assuming that there are instructions available).
@@ -962,7 +962,7 @@ Optimisation can be based on multiple different things:
 * optimising for execution (number of cycles).
 * optimising for size of the code.
 
-##Lecture Nineteen: Code Optimisation
+## Lecture Nineteen: Code Optimisation
 
 * Goal: improve program performance within some constraints (small sized code, power consumption, etc). <- HOW DO WE DEFINE OUR OBJECTIVE FUNCTION!? Usually via efficiency.
 * Issues:
@@ -975,7 +975,7 @@ Optimisation can be based on multiple different things:
 
 If you test GCC by enabling optimisations, then the compilation time is going to be longer, moderately sized programme, not small but not huge.
 
-####Optimising Transformations
+#### Optimising Transformations
 
 How do the compilers apply the optimisations? They have different transformations and they apply these in some kind of a sequence: T1->T2->T3->...->T_N.
 
@@ -991,7 +991,7 @@ Some typical transformations:
 
 For example, we might implement a multiplication as a number of additions and shifts. But this is machine-specific, because 32 bit, 64 bit, etc.
 
-####Classification
+#### Classification
 
 * By Scope:
 	* Local: within a single basic block.
@@ -1008,7 +1008,7 @@ For example, we might implement a multiplication as a number of additions and sh
 
 On average 90% of program execution is spent inside loops.
 
-####Optimisation Transformations:
+#### Optimisation Transformations:
 
 * Common subexpression elimination: searches for instances of identical expressions (i.e., they all evaluate to the same value), and analyses whether it is worthwhile replacing them with a single variable holding the computed value.
 * Copy propagation: from a programmers point of view, it might be a good idea to implement two different variables for two separate purposes, that contain the same value, because it is sensical for maintenance. From a compilers point of view, there is no point, its a waste, because variables take registers, take space in memory, etc. We can not both using both variables, we just use one and propagate it as far as it is un-changed in the programme.
@@ -1029,7 +1029,7 @@ Sometimes we need one transformation for the compiler to realise that another tr
 
 T1->T2->T3
 
-####Loop Transformations
+#### Loop Transformations
 
 * Loop-invariant code-motion:
 	* Detect statements inside a loop whose operands are constant or have all their definitions outside the loop - move out of the loop.
@@ -1039,7 +1039,7 @@ T1->T2->T3
 	* May improve cache usage when combined with loop interchange.
 
 
-####Loop Unrolling
+#### Loop Unrolling
 
 Loops are interesting high level structures, but if we think about the low level implementation, they create problems, because a simple:
 
@@ -1063,7 +1063,7 @@ Questions I'm likely to answer:
 
 **Need to go over these particular topics in detail!**
 
-####2014 exam paper
+#### 2014 exam paper
 
 Ties between weighted nodes (last question): two evaluation methods
 * number of successor nodes
@@ -1072,13 +1072,13 @@ Ties between weighted nodes (last question): two evaluation methods
 	* power consumption
 	* size of code ??
 
-####2008 exam paper
+#### 2008 exam paper
 
 assumption: extend basic block by loop unrolling,
 assumption 
 Optimisation: each iteration creates an overhead, larger basic blocks = less overhead, because in low level code, we're doing less branching.
 
-####IMPORTANT
+#### IMPORTANT
 
 **CODE OPTIMISATION VIA INLINING:**
 
@@ -1129,7 +1129,7 @@ call graphs are simpler.
 * Dead-code elimination: code that is redundant or is never going to be executed:
 
 
-##TODO-Tomorrow-Before-Exam:
+## TODO-Tomorrow-Before-Exam:
 * Learn Optimisations
 * go over list scheduling question (2012 - last question)
 * Thompson's Construction
@@ -1138,7 +1138,7 @@ call graphs are simpler.
 
 
 
-#References
+# References
 1. Rizos Sakellariou (2015), Compilers Lecture Slides, University of Manchester.
 2. James Power (2002), Parsing Lecture Notes, National University of Ireland, Maynooth.
 3. Wikipedia (2015), Instruction Scheduling, http://en.wikipedia.org/wiki/Instruction_scheduling
