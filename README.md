@@ -277,7 +277,7 @@ Grammar is left recursive if it has a non-terminal A, such that A->Aa, for some 
 
 <UPDATE THIS BIT>
 
-#####Conclusion
+##### Conclusion
 
 Top down parsing is good if we have a really simple grammar (as long as the grammar has simple properties: LL1, use top down parsing because it can be done without backtracking). However in the general case, real compilers use bottom up syntax analysis because not all grammars have the LL1 property.
 
@@ -436,7 +436,7 @@ becomes
 
 Basically similar to the above, but we just use the stack to push and pop variables..
 
-####Symbol Table
+#### Symbol Table
 
 Defines how types interact?? Captures information about all the useful symbol in the programme:
 * variables.
@@ -1054,7 +1054,7 @@ But we could just create the same loop body 5 times in a row and would be more o
 
 Compiler point of view, interesting transformations, has benefits. Increases the size of the code, but if the size of the code can be increase to gain a benefit in terms of run-time execution, then this is beneficial.
 
-##Twenty: Additional Notes for Exam
+## Twenty: Additional Notes for Exam
 
 Questions I'm likely to answer:
  1. DFA / NFA Question.
